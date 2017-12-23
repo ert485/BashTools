@@ -46,13 +46,13 @@ function processInput(){
 function initLogs(){
     mkdir -p "$dir/logs"
     logFile="$dir/logs/c9Setup.log.txt"
-    serveLogFile="$dir/logs/serve.log.txt"
+    servelogFile="$dir/logs/serve.log.txt"
   # get year-month-day Hour:Minute:Second timestamp
     timestamp() {
       date +"%Y-%m-%d %H:%M:%S"
     }
   # add timestamp to each log
-    echo "<-> Running c9Setup.bash in $dir: $(timestamp)" >> $logFile >> $serveLogFile
+    echo "<-> Running c9Setup.bash in $dir: $(timestamp)" >> $logFile >> $servelogFile
     echo "<-> Running c9Setup.bash in $dir: $(timestamp)" >> $logFile >> $logFile
 }
 
@@ -133,7 +133,7 @@ function newLaravel(){
 }
 
 function serveLaravel(){
-    run-apache2 &>> $serveLogFile &                         # runs in background
+    run-apache2 &>> $servelogFile &                         # runs in background
   # make executable that says where the site is hosted
     echo "echo hosting at http://\$C9_PROJECT-\$C9_USER.c9users.io" > site
     chmod +x site
@@ -157,28 +157,31 @@ processInput
 
 initLogs
 
-echo "<-> Installing php dependencies" | tee -a $LogFile
+echo "<-> Installing php dependencies" | tee -a $logFile
 installPHPdependencies &>> $logFile
 
-echo "<-> Configuring Site" | tee -a $LogFile
+echo "<-> Configuring Site" | tee -a $logFile
 setSiteConf &>> $logFile 
 
-echo "<-> Installing Laravel dependencies" | tee -a $LogFile
+echo "<-> Installing Laravel dependencies" | tee -a $logFile
 installLaravelDependencies &>> $logFile
+
+echo "<-> Serve the site" | tee -a $logFile
+serveLaravel
 
 if [ "$gitOrNew" = "new" ]; then
     
-    echo "<-> Making new Laravel project" | tee -a $LogFile
+    echo "<-> Making new Laravel project" | tee -a $logFile
     newLaravel &>> $logFile
     
-    echo "<-> Configuring database" | tee -a $LogFile
+    echo "<-> Configuring database" | tee -a $logFile
     databaseConfig &>> $logFile
     
-    echo "<-> Default string length bug fix" | tee -a $LogFile
+    echo "<-> Default string length bug fix" | tee -a $logFile
     defaultStringLengthMod &>> $logFile
     
     if [ "$auth" = "yes" ]; then
-        echo "<-> Making Auth" | tee -a $LogFile
+        echo "<-> Making Auth" | tee -a $logFile
         php artisan make:auth &>> $logFile
         php artisan migrate &>> $logFile
     fi
@@ -195,5 +198,4 @@ else
     
 fi
 
-echo "<-> Serve the site" | tee -a $logFile
-serveLaravel
+
