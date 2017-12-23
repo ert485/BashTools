@@ -15,7 +15,7 @@ function getInput(){
     read gitOrNew
     if [ "$gitOrNew" = "new" ]; then
         echo "What is the project name?"
-        read $projectName
+        read projectName
         echo "Do you want to generate user login? (enter 'yes' or 'no')"
         read auth
     else
