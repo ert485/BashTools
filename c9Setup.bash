@@ -26,12 +26,11 @@ function getInput(){
 
 # Modifies script input
 function processInput(){
-  # check for absolute path
-    if [[ "$dir" = /* ]]; then
-        dir="$dir"
-    else
-        dir="$PWD/$dir"
-    fi
+  # get absolute path
+    wasIn=$PWD
+    cd $dir
+    dir=$PWD
+    cd $wasIn
     echo "Using directory: $dir"
   # check git url for http
     if [ ! "$gitURL" = http* ]; then
@@ -192,5 +191,5 @@ else
     
 fi
 
-echo "<-> Serve the site" > | tee $logFile
+echo "<-> Serve the site" | tee $logFile
 serveLaravel
