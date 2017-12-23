@@ -27,6 +27,7 @@ function getInput(){
 # Modifies script input
 function processInput(){
   # get absolute path
+    mkdir -p $dir
     wasIn=$PWD
     cd $dir
     dir=$PWD
