@@ -26,10 +26,13 @@ function getInput(){
 
 # Modifies script input
 function processInput(){
-  # get absolute path
-    mkdir -p $dir
+  # store path
     wasIn=$PWD
-    cd $dir
+  # get absolute path (makes temp file to parse the input properly)
+    echo "mkdir -p $dir" > tmp
+    echo "cd $dir" >> tmp
+    . tmp
+    rm -f tmp
     dir=$PWD
     cd $wasIn
     echo "Using directory: $dir"
@@ -154,43 +157,43 @@ processInput
 
 initLogs
 
-echo "<-> Installing php dependencies" | tee $logFile
+echo "<-> Installing php dependencies" | tee -a $LogFile
 installPHPdependencies &>> $logFile
 
-echo "<-> Configuring Site" | tee $logFile
+echo "<-> Configuring Site" | tee -a $LogFile
 setSiteConf &>> $logFile 
 
-echo "<-> Installing Laravel dependencies" | tee $logFile
+echo "<-> Installing Laravel dependencies" | tee -a $LogFile
 installLaravelDependencies &>> $logFile
 
 if [ "$gitOrNew" = "new" ]; then
     
-    echo "<-> Making new Laravel project" | tee $logFile
+    echo "<-> Making new Laravel project" | tee -a $LogFile
     newLaravel &>> $logFile
     
-    echo "<-> Configuring database" | tee $logFile
+    echo "<-> Configuring database" | tee -a $LogFile
     databaseConfig &>> $logFile
     
-    echo "<-> Default string length bug fix" | tee $logFile
+    echo "<-> Default string length bug fix" | tee -a $LogFile
     defaultStringLengthMod &>> $logFile
     
     if [ "$auth" = "yes" ]; then
-        echo "<-> Making Auth" | tee $logFile
+        echo "<-> Making Auth" | tee -a $LogFile
         php artisan make:auth &>> $logFile
         php artisan migrate &>> $logFile
     fi
     
 else 
 
-    echo "<-> Cloning git repo" | tee $logFile
+    echo "<-> Cloning git repo" | tee -a $logFile
     gitClone &>> $logFile
     
-    echo "<-> Configuring database" | tee $logFile
+    echo "<-> Configuring database" | tee -a $logFile
     databaseConfig &>> $logFile
     
     php artisan migrate:refresh --seed
     
 fi
 
-echo "<-> Serve the site" | tee $logFile
+echo "<-> Serve the site" | tee -a $logFile
 serveLaravel
