@@ -30,8 +30,6 @@ setDefault "MYSQL_PASS" "root"
 setDefault "ADMIN_EMAIL" "webmaster@localhost"
 setDefault "DOMAIN_NAME" "mysite.com"
 
-setDefault "HOME" "/root"  # as a startup script, this wasn't set yet
-
 #----------------------------
 # Now all variables are valid, set path
 DIRBASE="/home/"
