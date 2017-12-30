@@ -43,8 +43,9 @@ function setApacheConf(){
     newConfName="$PROJECT_NAME.conf"
     apacheSitesDir="/etc/apache2/sites-available"
     conf="$apacheSitesDir/$newConfName"
-    
     newRoot="$DIR/public"
+    
+    apt install apache2
     
     echo '<VirtualHost *:80>'                 > $conf
     echo -e "\tServerName $DOMAIN_NAME"       >> $conf
@@ -61,7 +62,48 @@ function setApacheConf(){
     
   #enable the site, disable default
     sudo a2dissite 000-default; sudo a2ensite $newConfName
+    
+    sudo a2enmod rewrite
+    
     sudo service apache2 restart
+}
+
+# gets laravel installer
+function laravelInstaller(){
+    composer global require "laravel/installer"  
+    PATH=~/.composer/vendor/bin:$PATH
+    export PATH
+}
+
+# fix database bug (default string length)
+# needs laravel 5.5 project present
+function defaultStringLengthMod(){
+    sed -i "N;N;/boot()\\n    {/a\\\t\\tSchema::defaultStringLength(191);" $DIR/app/Providers/AppServiceProvider.php  
+    sed -i "/use Illuminate\\\Support\\\ServiceProvider;/ause Illuminate\\\Support\\\Facades\\\Schema;" $DIR/app/Providers/AppServiceProvider.php
+}
+
+# edit database config
+# needs .env present in $DIR
+function databaseConfig(){
+    sed -i "/DB_DATABASE=/c\DB_DATABASE=$MYSQL_DATABASE" $DIR/.env
+    sed -i "/DB_USERNAME=/c\DB_USERNAME=root" $dir/.env
+    sed -i "/DB_PASSWORD=/c\DB_PASSWORD=$MYSQL_PASSWORD" $DIR/.env
+}
+
+function newLaravel(){
+    mkdir -p $DIR
+    cd $DIR/..
+    laravel new $PROJECT_NAME
+}
+
+function installMysql(){
+    # from https://gist.github.com/sheikhwaqas/9088872
+    # Install MySQL Server in a Non-Interactive mode. Default root password will be $MYSQL_PASS
+    echo "mysql-server mysql-server/root_password password $MYSQL_PASS" | sudo debconf-set-selections
+    echo "mysql-server mysql-server/root_password_again password $MYSQL_PASS" | sudo debconf-set-selections
+    sudo apt-get -y install mysql-server
+    
+    mysql --user="root" --password="$MYSQL_PASS" --execute="create database $MYSQL_DATABASE"
 }
 
 #----------------------------
@@ -69,16 +111,21 @@ function setApacheConf(){
 
 sudo apt update
 
-# from https://gist.github.com/sheikhwaqas/9088872
-# Install MySQL Server in a Non-Interactive mode. Default root password will be $MYSQL_PASS
-echo "mysql-server mysql-server/root_password password $MYSQL_PASS" | sudo debconf-set-selections
-echo "mysql-server mysql-server/root_password_again password $MYSQL_PASS" | sudo debconf-set-selections
-sudo apt-get -y install mysql-server
+installMysql
 
-mysql --user="root" --password="$MYSQL_PASS" --execute="create database $MYSQL_DATABASE"
-
-apt install apache2
-
-sudo a2enmod rewrite
+setApacheConf
 
 installPHPdependencies
+
+laravelInstaller
+
+newLaravel
+
+databaseConfig
+
+defaultStringLengthMod
+
+php artisan make:auth
+
+php artisan migrate
+
