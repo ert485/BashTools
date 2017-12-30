@@ -153,3 +153,5 @@ defaultStringLengthMod
 
 addAuth
 
+service apache2 restart
+
