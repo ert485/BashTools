@@ -114,6 +114,14 @@ function getComposer(){
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 }
 
+function addAuth(){
+  cd $DIR
+  
+  php artisan make:auth
+
+  php artisan migrate:refresh --seed
+}
+
 #----------------------------
 # Start executing 
 
@@ -135,7 +143,5 @@ envConfig
 
 defaultStringLengthMod
 
-php artisan make:auth
-
-php artisan migrate
+addAuth
 
