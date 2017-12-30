@@ -97,6 +97,7 @@ function setApacheConf(){
 
 # gets laravel installer
 function laravelInstaller(){
+    setDefault "HOME" "/root"  # as a startup script, this wasn't set yet
     composer global require "laravel/installer"  
     PATH=~/.composer/vendor/bin:$PATH
     export PATH
@@ -129,6 +130,7 @@ function installMysql(){
 }
 
 function getComposer(){
+    COMPOSER_HOME=/home
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 }
 
