@@ -9,9 +9,6 @@ MYSQL_PASS=""
 ADMIN_EMAIL=""
 DOMAIN_NAME=""
 
-DIRBASE="/home/"
-DIR="$DIRBASE$PROJECT_NAME"
-
 #----------------------------
 # Set Defaults:
 if [ -z $PROJECT_NAME ];then 
@@ -37,6 +34,8 @@ if [ -z $DOMAIN_NAME ];then
   DOMAIN_NAME="mysite.com"
 fi
 
+DIRBASE="/home/"
+DIR="$DIRBASE$PROJECT_NAME"
 
 #----------------------------
 # Helper functions:
