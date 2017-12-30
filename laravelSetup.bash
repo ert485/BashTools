@@ -156,6 +156,7 @@ function cloneGit(){
   cp .env.example .env
   envConfig
   php artisan key:generate
+  composer update
 }
 
 #----------------------------
