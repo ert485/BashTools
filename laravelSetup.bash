@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# project name cannot contain spaces
 PROJECT_NAME="test"
 MYSQL_DATABASE="laravel"
 MYSQL_PASS="secret58bh"
@@ -47,7 +48,7 @@ function setApacheConf(){
     conf="$apacheSitesDir/$newConfName"
     newRoot="$DIR/public"
     
-    apt install apache2
+    apt install -y apache2
     
     echo '<VirtualHost *:80>'                 > $conf
     echo -e "\tServerName $DOMAIN_NAME"       >> $conf
@@ -105,7 +106,8 @@ function installMysql(){
     # Install MySQL Server in a Non-Interactive mode. Default root password will be $MYSQL_PASS
     echo "mysql-server mysql-server/root_password password $MYSQL_PASS" | sudo debconf-set-selections
     echo "mysql-server mysql-server/root_password_again password $MYSQL_PASS" | sudo debconf-set-selections
-    sudo apt-get -y install mysql-server
+    # sudo apt-get update
+    sudo apt-get -y install mysql-server-5.7
     
     mysql --user="root" --password="$MYSQL_PASS" --execute="create database $MYSQL_DATABASE"
 }
