@@ -116,8 +116,6 @@ function getComposer(){
 
 sudo apt update
 
-installMysql
-
 setApacheConf
 
 installPHPdependencies
@@ -125,6 +123,8 @@ installPHPdependencies
 getComposer
 
 laravelInstaller
+
+installMysql
 
 newLaravel
 
