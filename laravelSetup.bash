@@ -139,6 +139,9 @@ installMysql
 
 newLaravel
 
+# Give apache2 permission to storage directory
+chown -R www-data $DIR/storage
+
 envConfig
 
 defaultStringLengthMod
