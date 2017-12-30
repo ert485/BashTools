@@ -14,6 +14,7 @@ DIR="/home/$PROJECT_NAME"
 # updates any linux repo that contains $1 in the .list filename
 # param $1 (string) search term to look for repos
 # post condition: repos matching $1 will be updated
+# (much faster than a full "apt-get update")
 update_linux_repo() {
   # find repos containing the parameter (string)
     repos=$(grep -rl "$1" /etc/apt/sources.list.d)
@@ -38,7 +39,7 @@ function installPHPdependencies(){
     sudo apt-get install -y php7.1-mysql 
 } 
 
-# sets configs to serve from the appropriate directory
+# sets apache configs to serve from the appropriate directory
 function setApacheConf(){
     newConfName="$PROJECT_NAME.conf"
     apacheSitesDir="/etc/apache2/sites-available"
@@ -87,7 +88,7 @@ function defaultStringLengthMod(){
 function databaseConfig(){
     sed -i "/DB_DATABASE=/c\DB_DATABASE=$MYSQL_DATABASE" $DIR/.env
     sed -i "/DB_USERNAME=/c\DB_USERNAME=root" $dir/.env
-    sed -i "/DB_PASSWORD=/c\DB_PASSWORD=$MYSQL_PASSWORD" $DIR/.env
+    sed -i "/DB_PASSWORD=/c\DB_PASSWORD=$MYSQL_PASS" $DIR/.env
 }
 
 function newLaravel(){
@@ -106,6 +107,10 @@ function installMysql(){
     mysql --user="root" --password="$MYSQL_PASS" --execute="create database $MYSQL_DATABASE"
 }
 
+function getComposer(){
+    curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+}
+
 #----------------------------
 # Start executing 
 
@@ -116,6 +121,8 @@ installMysql
 setApacheConf
 
 installPHPdependencies
+
+getComposer
 
 laravelInstaller
 
