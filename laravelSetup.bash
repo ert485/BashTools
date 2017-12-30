@@ -84,12 +84,14 @@ function defaultStringLengthMod(){
     sed -i "/use Illuminate\\\Support\\\ServiceProvider;/ause Illuminate\\\Support\\\Facades\\\Schema;" $DIR/app/Providers/AppServiceProvider.php
 }
 
-# edit database config
+# edit environment config
 # needs .env present in $DIR
-function databaseConfig(){
+function envConfig(){
     sed -i "/DB_DATABASE=/c\DB_DATABASE=$MYSQL_DATABASE" $DIR/.env
-    sed -i "/DB_USERNAME=/c\DB_USERNAME=root" $dir/.env
+    sed -i "/DB_USERNAME=/c\DB_USERNAME=root" $DIR/.env
     sed -i "/DB_PASSWORD=/c\DB_PASSWORD=$MYSQL_PASS" $DIR/.env
+    sed -i "/APP_NAME=/c\APP_NAME=$PROJECT_NAME" $DIR/.env
+    sed -i "/APP_URL=/c\APP_URL=http://$DOMAIN_NAME" $DIR/.env
 }
 
 function newLaravel(){
@@ -129,7 +131,7 @@ installMysql
 
 newLaravel
 
-databaseConfig
+envConfig
 
 defaultStringLengthMod
 
