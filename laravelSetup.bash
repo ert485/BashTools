@@ -30,6 +30,8 @@ setDefault "MYSQL_PASS" "root"
 setDefault "ADMIN_EMAIL" "webmaster@localhost"
 setDefault "DOMAIN_NAME" "mysite.com"
 
+#----------------------------
+# Now all variables are valid, set path
 DIRBASE="/home/"
 mkdir -p $DIRBASE
 DIR="$DIRBASE$PROJECT_NAME"
@@ -132,6 +134,7 @@ function getComposer(){
 
 function addAuth(){
   cd $DIR
+  service mysql start
   php artisan make:auth
   php artisan migrate:refresh --seed
 }
@@ -161,6 +164,7 @@ sudo apt-get update
 installMysql
 service mysql stop # reduce memory used
 setApacheConf
+service apache2 stop # reduce memory used
 installPHPdependencies
 getComposer
 
@@ -172,5 +176,5 @@ fi
 
 # Give apache2 permission to storage directory
 chown -R www-data:www-data $DIR/storage
-service mysql start # start mysql again
+service mysql restart
 service apache2 restart
