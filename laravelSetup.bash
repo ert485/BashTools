@@ -131,6 +131,8 @@ sudo apt-get update
 
 installMysql
 
+service mysql stop # reduce memory consumption
+
 setApacheConf
 
 installPHPdependencies
@@ -138,6 +140,8 @@ installPHPdependencies
 getComposer
 
 laravelInstaller
+
+service mysql start # restart after done laravelInstaller
 
 newLaravel
 
