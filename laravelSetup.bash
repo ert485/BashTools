@@ -1,14 +1,42 @@
 #!/bin/bash
 
-# project name cannot contain spaces
-PROJECT_NAME="test"
-MYSQL_DATABASE="laravel"
-MYSQL_PASS="secret58bh"
+#----------------------------
+# Assign the following variables
+# Most of these must not contain spaces
+PROJECT_NAME=""
+MYSQL_DATABASE=""
+MYSQL_PASS=""
 ADMIN_EMAIL=""
 DOMAIN_NAME=""
 
 DIRBASE="/home/"
 DIR="$DIRBASE$PROJECT_NAME"
+
+#----------------------------
+# Set Defaults:
+if [ -z $PROJECT_NAME ];then 
+  PROJECT_NAME="laravel"
+fi
+
+if [ -z $MYSQL_DATABASE ];then 
+  MYSQL_DATABASE="laravel"
+fi
+
+if [ -z $MYSQL_PASS ];then 
+  echo "You did not set a mysql password"
+  echo "Using default of root. (NOT SECURE)"
+  echo "Please change this password after installation"
+  MYSQL_PASS="root"
+fi
+
+if [ -z $ADMIN_EMAIL ];then 
+  ADMIN_EMAIL="webmaster@localhost"
+fi
+
+if [ -z $DOMAIN_NAME ];then
+  DOMAIN_NAME="mysite.com"
+fi
+
 
 #----------------------------
 # Helper functions:
@@ -43,7 +71,7 @@ function installPHPdependencies(){
 
 # sets apache configs to serve from the appropriate directory
 function setApacheConf(){
-    newConfName="$PROJECT_NAME.conf"
+    newConfName="$DOMAIN_NAME.conf"
     apacheSitesDir="/etc/apache2/sites-available"
     conf="$apacheSitesDir/$newConfName"
     newRoot="$DIR/public"
@@ -52,6 +80,7 @@ function setApacheConf(){
     
     echo '<VirtualHost *:80>'                 > $conf
     echo -e "\tServerAdmin $ADMIN_EMAIL"      >> $conf
+    echo -e "\tServerName $DOMAIN_NAME"       >> $conf
     echo -e "\tDocumentRoot" $newRoot         >> $conf
     echo -e "\tLogLevel info"                 >> $conf
     echo -e "\tErrorLog ${APACHE_LOG_DIR}/error.log" >> $conf
@@ -130,7 +159,7 @@ sudo apt-get update
 
 installMysql
 
-service mysql stop # reduce memory consumption
+service mysql stop # reduce memory used
 
 setApacheConf
 
@@ -145,7 +174,7 @@ service mysql start # restart after done laravelInstaller
 newLaravel
 
 # Give apache2 permission to storage directory
-chown -R www-data $DIR/storage
+chown -R www-data:www-data $DIR/storage
 
 envConfig
 
