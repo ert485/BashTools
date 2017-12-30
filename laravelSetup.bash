@@ -51,7 +51,6 @@ function setApacheConf(){
     apt install -y apache2
     
     echo '<VirtualHost *:80>'                 > $conf
-    echo -e "\tServerName $DOMAIN_NAME"       >> $conf
     echo -e "\tServerAdmin $ADMIN_EMAIL"      >> $conf
     echo -e "\tDocumentRoot" $newRoot         >> $conf
     echo -e "\tLogLevel info"                 >> $conf
