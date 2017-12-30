@@ -6,7 +6,8 @@ MYSQL_PASS="secret58bh"
 ADMIN_EMAIL=""
 DOMAIN_NAME=""
 
-DIR="/home/$PROJECT_NAME"
+DIRBASE="/home/"
+DIR="$DIRBASE$PROJECT_NAME"
 
 #----------------------------
 # Helper functions:
@@ -92,8 +93,8 @@ function databaseConfig(){
 }
 
 function newLaravel(){
-    mkdir -p $DIR
-    cd $DIR/..
+    mkdir -p $DIRBASE
+    cd $DIRBASE
     laravel new $PROJECT_NAME
 }
 
