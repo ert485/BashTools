@@ -106,8 +106,11 @@ function installMysql(){
     # Install MySQL Server in a Non-Interactive mode. Default root password will be $MYSQL_PASS
     echo "mysql-server mysql-server/root_password password $MYSQL_PASS" | sudo debconf-set-selections
     echo "mysql-server mysql-server/root_password_again password $MYSQL_PASS" | sudo debconf-set-selections
-    # sudo apt-get update
-    sudo apt-get -y install mysql-server-5.7
+    
+    # Would be nice to avoid using apt update again 
+    sudo apt-get update
+    
+    sudo apt-get -y install mysql-server
     
     mysql --user="root" --password="$MYSQL_PASS" --execute="create database $MYSQL_DATABASE"
 }
