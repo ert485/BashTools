@@ -3,38 +3,35 @@
 #----------------------------
 # Assign the following variables
 # Most of these must not contain spaces
+# There are default values but passwords are not secure
 PROJECT_NAME=""
 MYSQL_DATABASE=""
 MYSQL_PASS=""
 ADMIN_EMAIL=""
 DOMAIN_NAME=""
+GIT_URL=""
+
 
 #----------------------------
 # Set Defaults:
-if [ -z $PROJECT_NAME ];then 
-  PROJECT_NAME="laravel"
-fi
 
-if [ -z $MYSQL_DATABASE ];then 
-  MYSQL_DATABASE="laravel"
-fi
+# if variable named in $1 contains an empty string,
+# replace the empty string with contents of $2
+# (do not include '$' in the variable name in $1)
+function setDefault(){
+  if [ -z ${!1} ];then
+    eval ${1}=$2
+  fi
+}
 
-if [ -z $MYSQL_PASS ];then 
-  echo "You did not set a mysql password"
-  echo "Using default of root. (NOT SECURE)"
-  echo "Please change this password after installation"
-  MYSQL_PASS="root"
-fi
-
-if [ -z $ADMIN_EMAIL ];then 
-  ADMIN_EMAIL="webmaster@localhost"
-fi
-
-if [ -z $DOMAIN_NAME ];then
-  DOMAIN_NAME="mysite.com"
-fi
+setDefault "PROJECT_NAME" "laravel"
+setDefault "MYSQL_DATABASE" "laravel"
+setDefault "MYSQL_PASS" "root"
+setDefault "ADMIN_EMAIL" "webmaster@localhost"
+setDefault "DOMAIN_NAME" "mysite.com"
 
 DIRBASE="/home/"
+mkdir -p $DIRBASE
 DIR="$DIRBASE$PROJECT_NAME"
 
 #----------------------------
@@ -92,9 +89,7 @@ function setApacheConf(){
     
   #enable the site, disable default
     sudo a2dissite 000-default; sudo a2ensite $newConfName
-    
     sudo a2enmod rewrite
-    
     sudo service apache2 restart
 }
 
@@ -122,20 +117,12 @@ function envConfig(){
     sed -i "/APP_URL=/c\APP_URL=http://$DOMAIN_NAME" $DIR/.env
 }
 
-function newLaravel(){
-    mkdir -p $DIRBASE
-    cd $DIRBASE
-    laravel new $PROJECT_NAME
-}
-
 function installMysql(){
     # from https://gist.github.com/sheikhwaqas/9088872
     # Install MySQL Server in a Non-Interactive mode. Default root password will be $MYSQL_PASS
     echo "mysql-server mysql-server/root_password password $MYSQL_PASS" | sudo debconf-set-selections
-    echo "mysql-server mysql-server/root_password_again password $MYSQL_PASS" | sudo debconf-set-selections
-        
+    echo "mysql-server mysql-server/root_password_again password $MYSQL_PASS" | sudo debconf-set-selections 
     sudo apt-get -y install mysql-server
-    
     mysql --user="root" --password="$MYSQL_PASS" --execute="create database $MYSQL_DATABASE"
 }
 
@@ -145,41 +132,45 @@ function getComposer(){
 
 function addAuth(){
   cd $DIR
-  
   php artisan make:auth
-
   php artisan migrate:refresh --seed
+}
+
+function newLaravel(){
+    cd $DIRBASE
+    laravel new $PROJECT_NAME
+    envConfig
+    defaultStringLengthMod
+    addAuth
+    laravelInstaller
+}
+
+function cloneGit(){
+  cd $DIRBASE
+  git clone $GIT_URL $PROJECT_NAME
+  cd $PROJECT_NAME
+  cp .env.example .env
+  envConfig
+  php artisan key:generate
 }
 
 #----------------------------
 # Start executing 
 
 sudo apt-get update
-
 installMysql
-
 service mysql stop # reduce memory used
-
 setApacheConf
-
 installPHPdependencies
-
 getComposer
 
-laravelInstaller
-
-service mysql start # restart after done laravelInstaller
-
-newLaravel
+if [ -z $GIT_URL ];then
+    newLaravel
+else
+    cloneGit
+fi
 
 # Give apache2 permission to storage directory
 chown -R www-data:www-data $DIR/storage
-
-envConfig
-
-defaultStringLengthMod
-
-addAuth
-
+service mysql start # start mysql again
 service apache2 restart
-
