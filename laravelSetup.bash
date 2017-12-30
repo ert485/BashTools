@@ -140,12 +140,12 @@ function addAuth(){
 }
 
 function newLaravel(){
+    laravelInstaller
     cd $DIRBASE
     laravel new $PROJECT_NAME
     envConfig
     defaultStringLengthMod
     addAuth
-    laravelInstaller
 }
 
 function cloneGit(){
