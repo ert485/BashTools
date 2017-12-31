@@ -89,6 +89,7 @@ function setApacheConf(){
     
     echo '<VirtualHost *:80>'                 > $conf
     echo -e "\tDocumentRoot" $newRoot         >> $conf
+    echo -e "\tServerAdmin" $ADMIN_EMAIL      >> $conf
     echo -e "\tLogLevel info"                 >> $conf
     echo -e "\tErrorLog ${APACHE_LOG_DIR}/error.log" >> $conf
     echo -e "\tCustomLog ${APACHE_LOG_DIR}/access.log combined" >> $conf
@@ -198,3 +199,5 @@ fi
 chown -R www-data:www-data $DIR/storage
 service mysql restart
 service apache2 restart
+
+sslCert
