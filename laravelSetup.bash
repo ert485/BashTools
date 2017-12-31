@@ -157,6 +157,7 @@ function cloneGit(){
   envConfig
   composer update
   php artisan key:generate
+  service mysql start
   php artisan migrate
 }
 
