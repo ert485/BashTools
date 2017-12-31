@@ -15,12 +15,23 @@
 # Assign the following variables
 # Most of these must not contain spaces
 # There are default values but passwords are not secure
-PROJECT_NAME=""
-MYSQL_DATABASE=""
-MYSQL_PASS=""
-ADMIN_EMAIL=""
-DOMAIN_NAME=""
-GIT_URL=""
+echo "enter project name"
+read PROJECT_NAME
+
+echo "enter database name"
+read MYSQL_DATABASE
+
+echo "enter mysql password (not secure yet)"
+read MYSQL_PASS
+
+echo "enter admin email"
+read ADMIN_EMAIL
+
+echo "enter domain name"
+read DOMAIN_NAME
+
+echo "enter git url"
+read GIT_URL
 
 
 #----------------------------
