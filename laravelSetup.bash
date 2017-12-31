@@ -165,7 +165,8 @@ function sslCert(){
   cd ~
   wget https://dl.eff.org/certbot-auto
   chmod a+x certbot-auto
-  echo -e "Y\n$ADMIN_EMAIL\nA\n2\n" | ./certbot-auto 
+  # echo -e "Y\n$ADMIN_EMAIL\nA\n2\n" | ./certbot-auto 
+  certbot-auto --non-interactive --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME
 }
 
 #----------------------------
