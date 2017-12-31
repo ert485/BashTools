@@ -1,6 +1,15 @@
 #!/bin/bash
 
 #----------------------------
+# TODO:
+#   re-test composer install
+#   check security
+#     interactive passwords
+#     secure mysql
+#   multiple sites
+#   multiple domains
+
+#----------------------------
 # Assign the following variables
 # Most of these must not contain spaces
 # There are default values but passwords are not secure
@@ -155,7 +164,7 @@ function cloneGit(){
   cd $PROJECT_NAME
   cp .env.example .env
   envConfig
-  composer update
+  composer install --no-plugins --no-scripts
   php artisan key:generate
   service mysql start
   php artisan migrate
