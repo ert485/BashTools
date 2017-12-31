@@ -195,6 +195,16 @@ function sslCert(){
   ./certbot-auto -n --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME
  # Redirect http to https
   sed -i "/<VirtualHost \*:80>/a\\\tRedirect / https://$DOMAIN_NAME/" /etc/apache2/sites-available/$DOMAIN_NAME.conf 
+  service apache2 restart
+}
+
+function cloud9(){
+  apt install -y build-essential python2.7 nodejs
+  cd ~
+  git clone git://github.com/c9/core.git c9sdk
+  cd c9sdk
+  scripts/install-sdk.sh
+  node server.js -p 8181 -l 0.0.0.0 -w $DIR -a user:password
 }
 
 #----------------------------
