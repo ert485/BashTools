@@ -155,8 +155,16 @@ function cloneGit(){
   cd $PROJECT_NAME
   cp .env.example .env
   envConfig
-  php artisan key:generate
   composer update
+  php artisan key:generate
+  php artisan migrate
+}
+
+function sslCert(){
+  cd ~
+  wget https://dl.eff.org/certbot-auto
+  chmod a+x certbot-auto
+  echo -e "Y\n$ADMIN_EMAIL\nA\n2\n" | ./certbot-auto 
 }
 
 #----------------------------
