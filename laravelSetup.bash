@@ -1,6 +1,12 @@
 #!/bin/bash
 
 #----------------------------
+# Usage:
+#   . laravelSetup.bash < config.txt
+# recommended: 
+#   if using vultr, change root password
+
+#----------------------------
 # TODO:
 #   test sslCert
 #   see if you can use non root user to run composer install
@@ -186,7 +192,7 @@ function sslCert(){
   cd ~
   wget https://dl.eff.org/certbot-auto
   chmod a+x certbot-auto
-  (echo -e "Y\n2\n" && cat) | ./certbot-auto --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME --force-interactive
+  (echo -e "Y\nY\n2\n" && cat) | ./certbot-auto --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME --force-interactive
 }
 
 #----------------------------
