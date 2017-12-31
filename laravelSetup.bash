@@ -2,12 +2,14 @@
 
 #----------------------------
 # TODO:
-#   re-test composer install
+#   test sslCert
+#   see if you can use non root user to run composer install
 #   check security
 #     interactive passwords
 #     secure mysql
 #   multiple sites
 #   multiple domains
+#   speed up sslCert (using different version ubuntu?)
 
 #----------------------------
 # Assign the following variables
@@ -86,8 +88,6 @@ function setApacheConf(){
     apt install -y apache2
     
     echo '<VirtualHost *:80>'                 > $conf
-    echo -e "\tServerAdmin $ADMIN_EMAIL"      >> $conf
-    echo -e "\tServerName $DOMAIN_NAME"       >> $conf
     echo -e "\tDocumentRoot" $newRoot         >> $conf
     echo -e "\tLogLevel info"                 >> $conf
     echo -e "\tErrorLog ${APACHE_LOG_DIR}/error.log" >> $conf
@@ -174,8 +174,7 @@ function sslCert(){
   cd ~
   wget https://dl.eff.org/certbot-auto
   chmod a+x certbot-auto
-  # echo -e "Y\n$ADMIN_EMAIL\nA\n2\n" | ./certbot-auto 
-  certbot-auto --non-interactive --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME
+  (echo -e "Y\n2\n" && cat) | ./certbot-auto --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME
 }
 
 #----------------------------
