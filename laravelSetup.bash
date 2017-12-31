@@ -193,6 +193,8 @@ function sslCert(){
   wget https://dl.eff.org/certbot-auto
   chmod a+x certbot-auto
   ./certbot-auto -n --agree-tos --email $ADMIN_EMAIL --apache --domains $DOMAIN_NAME
+ # Redirect http to https
+  sed -i "/<VirtualHost \*:80>/a\\\tRedirect / https://$DOMAIN_NAME/" /etc/apache2/sites-available/$DOMAIN_NAME.conf 
 }
 
 #----------------------------
