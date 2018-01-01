@@ -204,8 +204,8 @@ function cloud9(){
   git clone git://github.com/c9/core.git c9sdk
   cd c9sdk
   scripts/install-sdk.sh
-  node server.js -p 8181 -l 0.0.0.0 -w $DIR -a user:password &
-  disown
+  ufw allow 8181/tcp
+  nohup node server.js -p 8181 -l 0.0.0.0 -w $DIR -a user:$MYSQL_PASS
 }
 
 #----------------------------
